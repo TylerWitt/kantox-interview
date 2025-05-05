@@ -5,6 +5,8 @@ defmodule Basket.Products do
 
   alias Basket.Products.Product
 
+  @type basket :: %{Product.t() => pos_integer()}
+
   defmodule InvalidProduct do
     defexception [:message]
 
@@ -15,9 +17,21 @@ defmodule Basket.Products do
     end
   end
 
+  @doc "Returns the amount of products in a given category within a basket"
+  @spec basket_category_sum(basket :: basket, category :: String.t()) :: non_neg_integer()
+  def basket_category_sum(basket, category) do
+    Enum.sum_by(basket, fn {product, count} ->
+      if product.category == category do
+        count
+      else
+        0
+      end
+    end)
+  end
+
   @doc "Finds a product or raises if it does not exist"
-  @spec find_product(product_code :: Product.product_code()) :: Product.t()
-  def find_product(product_code) do
+  @spec find_product!(product_code :: Product.product_code()) :: Product.t()
+  def find_product!(product_code) do
     case active_store().find_product(product_code) do
       nil ->
         raise InvalidProduct, product_code

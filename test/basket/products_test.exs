@@ -30,14 +30,14 @@ defmodule Basket.ProductsTest do
 
   test "raises when items are not found" do
     assert_raise Products.InvalidProduct, "product code does not exist, got: \"-1\"", fn ->
-      Products.find_product("-1")
+      Products.find_product!("-1")
     end
   end
 
   test "returns the product when found" do
     code = "AA1"
 
-    result = Products.find_product(code)
+    result = Products.find_product!(code)
 
     assert result.product_code == code
   end
