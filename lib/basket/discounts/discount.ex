@@ -83,16 +83,4 @@ defmodule Basket.Discounts.Discount do
   def static_price(price, %Product{} = product, count) do
     {%Product{product | price: price}, count}
   end
-
-  @doc """
-  Logic to change prices by a percentage.
-
-  ### Examples
-
-    iex> reduce_price(0.5, %Basket.Products.Product{price: 300.00}, 3)
-    {%Basket.Products.Product{price: 150.00}, 3}
-  """
-  def reduce_price(percentage, %Product{} = product, count) do
-    {%Product{product | price: product.price * percentage}, count}
-  end
 end
