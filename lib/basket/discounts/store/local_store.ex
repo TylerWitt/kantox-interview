@@ -26,7 +26,7 @@ defmodule Basket.Discounts.Store.LocalStore do
           product.product_code == "SR1" && basket[product] >= 3
         end,
         pricing_rule: fn product, count ->
-          Discount.static_price(4.50, product, count)
+          Discount.static_price(Money.new(450), product, count)
         end
       },
       %Discount{

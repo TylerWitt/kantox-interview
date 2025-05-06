@@ -77,8 +77,8 @@ defmodule Basket.Discounts.Discount do
 
   ### Examples
 
-    iex> static_price(4.50, %Basket.Products.Product{}, 3)
-    {%Basket.Products.Product{price: 4.50}, 3}
+    iex> static_price(Money.new(450), %Basket.Products.Product{}, 3)
+    {%Basket.Products.Product{price: Money.new(450)}, 3}
   """
   def static_price(price, %Product{} = product, count) do
     {%Product{product | price: price}, count}

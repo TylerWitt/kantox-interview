@@ -13,19 +13,19 @@ defmodule Basket.Products.Store.LocalStore do
     "GR1" => %Product{
       product_code: "GR1",
       category: "Green tea",
-      price: 3.11,
+      price: Money.new(311),
       name: "Green tea"
     },
     "SR1" => %Product{
       product_code: "SR1",
       category: "Strawberry",
-      price: 5.00,
+      price: Money.new(500),
       name: "Strawberry"
     },
     "CF1" => %Product{
       product_code: "CF1",
       category: "Coffee",
-      price: 5.00,
+      price: Money.new(1123),
       name: "Coffee"
     }
   }
