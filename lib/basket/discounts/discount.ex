@@ -77,10 +77,22 @@ defmodule Basket.Discounts.Discount do
 
   ### Examples
 
-    iex> static_price(Money.new(450), %Basket.Products.Product{}, 3)
-    {%Basket.Products.Product{price: Money.new(450)}, 3}
+    iex> static_price(Decimal.new("4.50"), %Basket.Products.Product{}, 3)
+    {%Basket.Products.Product{price: Decimal.new("4.50")}, 3}
   """
   def static_price(price, %Product{} = product, count) do
     {%Product{product | price: price}, count}
+  end
+
+  @doc """
+  Logic to change prices by a percentage.
+
+  ### Examples
+
+    iex> reduce_price(Decimal.div(1, 2), %Basket.Products.Product{price: Decimal.new("300.00")}, 3)
+    {%Basket.Products.Product{price: Decimal.new("150.000")}, 3}
+  """
+  def reduce_price(percentage, %Product{} = product, count) do
+    {%Product{product | price: Decimal.mult(product.price, percentage)}, count}
   end
 end

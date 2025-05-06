@@ -15,9 +15,10 @@ defmodule Basket.PricingEngine do
 
     basket
     |> apply_discounts()
-    |> Enum.reduce(Money.new(0), fn {product, count}, acc ->
-      Money.add(acc, Money.multiply(product.price, count))
+    |> Enum.reduce(Decimal.new("0"), fn {product, count}, acc ->
+      Decimal.add(acc, Decimal.mult(product.price, count))
     end)
+    |> Money.parse!()
   end
 
   defp apply_discounts(basket) do

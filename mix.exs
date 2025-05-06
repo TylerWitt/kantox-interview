@@ -21,6 +21,7 @@ defmodule Basket.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:decimal, "~> 2.0"},
       # I could have used Decimal instead, but there is a good argument here to use money
       # https://www.martinfowler.com/eaaCatalog/money.html
       {:money, "~> 1.14"}
