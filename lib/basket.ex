@@ -3,6 +3,8 @@ defmodule Basket do
   An order independent price builder.
   """
 
+  alias Basket.PricingEngine
+
   @doc """
   Returns the price of the list of products, including any discounts.
 
@@ -21,7 +23,9 @@ defmodule Basket do
       "£30.57"
 
   """
-  def price(_products) do
-    raise "implement"
+  def price(products) do
+    products
+    |> PricingEngine.process()
+    |> Money.to_string()
   end
 end

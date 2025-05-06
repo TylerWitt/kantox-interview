@@ -17,6 +17,12 @@ defmodule Basket.Products do
     end
   end
 
+  @doc "Converts a list of product codes into a basket, which is a map containing the frequencies of each product"
+  @spec generate_basket(product_codes :: list(Product.product_code())) :: basket()
+  def generate_basket(product_codes) do
+    Enum.frequencies_by(product_codes, &find_product!/1)
+  end
+
   @doc "Returns the amount of products in a given category within a basket"
   @spec basket_category_sum(basket :: basket, category :: String.t()) :: non_neg_integer()
   def basket_category_sum(basket, category) do
