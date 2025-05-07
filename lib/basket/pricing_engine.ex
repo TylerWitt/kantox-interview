@@ -11,14 +11,17 @@ defmodule Basket.PricingEngine do
   """
   @spec process(products :: list(String.t())) :: Money.t()
   def process(products) do
-    basket = Products.generate_basket(products)
-
-    basket
+    products
+    |> Products.generate_basket()
     |> apply_discounts()
-    |> Enum.reduce(Decimal.new("0"), fn {product, count}, acc ->
+    |> sum_prices()
+    |> Money.parse!()
+  end
+
+  defp sum_prices(basket) do
+    Enum.reduce(basket, Decimal.new("0"), fn {product, count}, acc ->
       Decimal.add(acc, Decimal.mult(product.price, count))
     end)
-    |> Money.parse!()
   end
 
   defp apply_discounts(basket) do
