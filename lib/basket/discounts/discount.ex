@@ -28,42 +28,43 @@ defmodule Basket.Discounts.Discount do
   This module has some helpers for pricing, but any anonymous function with the correct signature is usable.
   """
 
-alias Basket.Products
+  alias Basket.Products
   alias Basket.Products.Product
 
   @type t() :: %__MODULE__{
           name: String.t(),
-          application_rule: (Product.t(), map() -> boolean()),
-          pricing_rule: (Product.t(), pos_integer() -> {Product.t(), pos_integer()})
+          application_rule: (Products.basket_item(), Products.basket() -> boolean()),
+          pricing_rule: (Products.basket_item() -> Products.basket_item())
         }
 
-  defstruct [:name, :activation_rule, :application_rule, :pricing_rule]
+  defstruct [:name, :application_rule, :pricing_rule]
 
   @doc """
   Logic to apply BxGy discounts.
 
   ### Examples
 
-    iex> buy_x_get_y_free(2, 1, %Basket.Products.Product{}, 5)
+    iex> buy_x_get_y_free(2, 1, {%Basket.Products.Product{}, 5})
     {%Basket.Products.Product{}, 4}
 
-    iex> buy_x_get_y_free(1, 1, %Basket.Products.Product{}, 5)
+    iex> buy_x_get_y_free(1, 1, {%Basket.Products.Product{}, 5})
     {%Basket.Products.Product{}, 3}
 
-    iex> buy_x_get_y_free(1, 2, %Basket.Products.Product{}, 5)
+    iex> buy_x_get_y_free(1, 2, {%Basket.Products.Product{}, 5})
     {%Basket.Products.Product{}, 2}
 
-    iex> buy_x_get_y_free(2, 1, %Basket.Products.Product{}, 9)
+    iex> buy_x_get_y_free(2, 1, {%Basket.Products.Product{}, 9})
     {%Basket.Products.Product{}, 6}
 
-    iex> buy_x_get_y_free(1, 1, %Basket.Products.Product{}, 9)
+    iex> buy_x_get_y_free(1, 1, {%Basket.Products.Product{}, 9})
     {%Basket.Products.Product{}, 5}
 
-    iex> buy_x_get_y_free(1, 2, %Basket.Products.Product{}, 9)
+    iex> buy_x_get_y_free(1, 2, {%Basket.Products.Product{}, 9})
     {%Basket.Products.Product{}, 3}
   """
-  @spec buy_x_get_y_free(pos_integer(), pos_integer(), Product.t(), pos_integer()) :: Products.basket_item()
-  def buy_x_get_y_free(x, y, %Product{} = product, count) when x > 0 and y > 0 do
+  @spec buy_x_get_y_free(pos_integer(), pos_integer(), Products.basket_item()) ::
+          Products.basket_item()
+  def buy_x_get_y_free(x, y, {%Product{} = product, count}) when x > 0 and y > 0 do
     group_size = x + y
     full_groups = div(count, group_size)
     remaining = rem(count, group_size)
@@ -79,11 +80,11 @@ alias Basket.Products
 
   ### Examples
 
-    iex> static_price(Decimal.new("4.50"), %Basket.Products.Product{}, 3)
+    iex> static_price(Decimal.new("4.50"), {%Basket.Products.Product{}, 3})
     {%Basket.Products.Product{price: Decimal.new("4.50")}, 3}
   """
-  @spec static_price(Decimal.t(), Product.t(), pos_integer()) :: Products.basket_item()
-  def static_price(price, %Product{} = product, count) do
+  @spec static_price(Decimal.t(), Products.basket_item()) :: Products.basket_item()
+  def static_price(price, {%Product{} = product, count}) do
     {%Product{product | price: price}, count}
   end
 
@@ -92,11 +93,11 @@ alias Basket.Products
 
   ### Examples
 
-    iex> reduce_price(Decimal.div(1, 2), %Basket.Products.Product{price: Decimal.new("300.00")}, 3)
+    iex> reduce_price(Decimal.div(1, 2), {%Basket.Products.Product{price: Decimal.new("300.00")}, 3})
     {%Basket.Products.Product{price: Decimal.new("150.000")}, 3}
   """
-  @spec reduce_price(percentage :: Decimal.t(), Product.t(), pos_integer()) :: Products.basket_item()
-  def reduce_price(percentage, %Product{} = product, count) do
+  @spec reduce_price(percentage :: Decimal.t(), Products.basket_item()) :: Products.basket_item()
+  def reduce_price(percentage, {%Product{} = product, count}) do
     {%Product{product | price: Decimal.mult(product.price, percentage)}, count}
   end
 end

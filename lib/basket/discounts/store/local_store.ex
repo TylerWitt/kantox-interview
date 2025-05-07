@@ -15,27 +15,27 @@ defmodule Basket.Discounts.Store.LocalStore do
     [
       %Discount{
         name: "Buy-One-Get-One Green Tea!",
-        application_rule: fn product, basket ->
-          product.product_code == "GR1" && basket[product] >= 2
+        application_rule: fn {product, count}, _basket ->
+          product.product_code == "GR1" && count >= 2
         end,
-        pricing_rule: fn product, count -> Discount.buy_x_get_y_free(1, 1, product, count) end
+        pricing_rule: fn basket_item -> Discount.buy_x_get_y_free(1, 1, basket_item) end
       },
       %Discount{
         name: "Bulk Strawberries!",
-        application_rule: fn product, basket ->
-          product.product_code == "SR1" && basket[product] >= 3
+        application_rule: fn {product, count}, _basket ->
+          product.product_code == "SR1" && count >= 3
         end,
-        pricing_rule: fn product, count ->
-          Discount.static_price(Decimal.new("4.50"), product, count)
+        pricing_rule: fn basket_item ->
+          Discount.static_price(Decimal.new("4.50"), basket_item)
         end
       },
       %Discount{
         name: "Bulk Coffee!",
-        application_rule: fn product, basket ->
+        application_rule: fn {product, _count}, basket ->
           product.category == "Coffee" && Products.basket_category_sum(basket, "Coffee") >= 3
         end,
-        pricing_rule: fn product, count ->
-          Discount.reduce_price(Decimal.div(2, 3), product, count)
+        pricing_rule: fn basket_item ->
+          Discount.reduce_price(Decimal.div(2, 3), basket_item)
         end
       }
     ]

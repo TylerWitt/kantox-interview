@@ -27,25 +27,34 @@ defmodule Basket.PricingEngine do
   defp apply_discounts(basket) do
     discounts = Discounts.all()
 
-    for {product, count} <- basket, into: %{} do
-      case Enum.filter(discounts, fn discount -> discount.application_rule.(product, basket) end) do
+    # Looping through products instead of discounts allows us to accumulate the discounts for a product,
+    # which lets us "smartly" apply them if needed, instead of the inverse where we loop through discounts
+    # and just apply them in-order.
+    #
+    # Admittedly, I'm sure that this code block would change with real data for whatever reason--without more
+    # use-case info it's a hard to assume which direction this will go, but it's good enough in the context of
+    # the original problem statement.
+    for basket_item <- basket, into: %{} do
+      case Enum.filter(discounts, fn discount ->
+             discount.application_rule.(basket_item, basket)
+           end) do
         [] ->
-          {product, count}
+          basket_item
 
         discounts ->
-          process_discounts_for_product(discounts, product, count)
+          process_discounts_for_product(discounts, basket_item)
       end
     end
   end
 
-  defp process_discounts_for_product([], product, count), do: {product, count}
+  defp process_discounts_for_product([], basket_item), do: basket_item
 
-  defp process_discounts_for_product([discount | rest], product, count) do
-    {product, count} = process_discount(discount, product, count)
-    process_discounts_for_product(rest, product, count)
+  defp process_discounts_for_product([discount | rest], basket_item) do
+    basket_item = process_discount(discount, basket_item)
+    process_discounts_for_product(rest, basket_item)
   end
 
-  defp process_discount(discount, product, count) do
-    discount.pricing_rule.(product, count)
+  defp process_discount(discount, basket_item) do
+    discount.pricing_rule.(basket_item)
   end
 end
