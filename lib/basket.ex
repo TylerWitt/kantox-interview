@@ -22,6 +22,9 @@ defmodule Basket do
       iex> Basket.price(["GR1","CF1","SR1","CF1","CF1"])
       "£30.57"
 
+      iex> Basket.price([])
+      "£0.00"
+
   """
   @spec price(products :: list(String.t())) :: String.t()
   def price(products) do
