@@ -28,6 +28,7 @@ defmodule Basket.Discounts.Discount do
   This module has some helpers for pricing, but any anonymous function with the correct signature is usable.
   """
 
+alias Basket.Products
   alias Basket.Products.Product
 
   @type t() :: %__MODULE__{
@@ -61,6 +62,7 @@ defmodule Basket.Discounts.Discount do
     iex> buy_x_get_y_free(1, 2, %Basket.Products.Product{}, 9)
     {%Basket.Products.Product{}, 3}
   """
+  @spec buy_x_get_y_free(pos_integer(), pos_integer(), Product.t(), pos_integer()) :: Products.basket_item()
   def buy_x_get_y_free(x, y, %Product{} = product, count) when x > 0 and y > 0 do
     group_size = x + y
     full_groups = div(count, group_size)
@@ -80,6 +82,7 @@ defmodule Basket.Discounts.Discount do
     iex> static_price(Decimal.new("4.50"), %Basket.Products.Product{}, 3)
     {%Basket.Products.Product{price: Decimal.new("4.50")}, 3}
   """
+  @spec static_price(Decimal.t(), Product.t(), pos_integer()) :: Products.basket_item()
   def static_price(price, %Product{} = product, count) do
     {%Product{product | price: price}, count}
   end
@@ -92,6 +95,7 @@ defmodule Basket.Discounts.Discount do
     iex> reduce_price(Decimal.div(1, 2), %Basket.Products.Product{price: Decimal.new("300.00")}, 3)
     {%Basket.Products.Product{price: Decimal.new("150.000")}, 3}
   """
+  @spec reduce_price(percentage :: Decimal.t(), Product.t(), pos_integer()) :: Products.basket_item()
   def reduce_price(percentage, %Product{} = product, count) do
     {%Product{product | price: Decimal.mult(product.price, percentage)}, count}
   end

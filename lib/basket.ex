@@ -23,6 +23,7 @@ defmodule Basket do
       "£30.57"
 
   """
+  @spec price(products :: list(String.t())) :: String.t()
   def price(products) do
     products
     |> PricingEngine.process()

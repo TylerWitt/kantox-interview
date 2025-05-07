@@ -6,6 +6,7 @@ defmodule Basket.Products do
   alias Basket.Products.Product
 
   @type basket :: %{Product.t() => pos_integer()}
+  @type basket_item :: {Product.t(), pos_integer()}
 
   defmodule InvalidProduct do
     defexception [:message]

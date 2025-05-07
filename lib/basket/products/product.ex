@@ -6,7 +6,7 @@ defmodule Basket.Products.Product do
   @type t :: %__MODULE__{
           product_code: product_code(),
           name: String.t(),
-          price: float(),
+          price: Decimal.t(),
           category: String.t() | nil
         }
 
